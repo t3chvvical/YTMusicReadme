@@ -1,7 +1,17 @@
+# Pesca de la aplicación
+*.json
+*.svg
+*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+Scripts/
+static/
+*.cfg
+*.tag
 
 # C extensions
 *.so

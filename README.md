@@ -1,0 +1,3 @@
+- Instalar ytmusicapi y ejecutar "ytmusicapi ouath"
+- Obtener las credenciales y poner el client_id y el client_server en "constants.py"
+- Ejecutar el servidor
