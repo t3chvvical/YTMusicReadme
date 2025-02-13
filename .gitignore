@@ -9,9 +9,9 @@ __pycache__/
 *$py.class
 
 Scripts/
-static/
 *.cfg
 *.tag
+*.svg
 
 # C extensions
 *.so
