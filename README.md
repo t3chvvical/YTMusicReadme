@@ -25,12 +25,12 @@
   - Open the link: Google will ask you to use the app you created in the Cloud Console with an account.
   - Once you have done, it will create a .json file. Save it.
  
-### 3. Final step before hosting
+#### 3. Final step before hosting
 - Download this repo as a .zip and create a new **private GitHub repo** with the content of it (it can't be forked because it'll contain sensible data, so it must be private).
 - Edit the **.gitignore**, remove line that says ***.json*** and add ***oauth.json*** to the repo.
 - Save the changes.
 
-### 4. Hosting on ~~PythonAnywhere~~ Koyeb 🥲
+#### 4. Hosting on ~~PythonAnywhere~~ Koyeb 🥲
 **I tried hosting it on PythonAnywhere, but for free users it blocks the access to every page that isn't in their whitelist, and Youtube is one of them. *If you now any other free page that works fine, please let me now*.**
 - Create a Koyeb account, go to **Create service** and select **Web Service**.
 - Give it access to the repo you created in step 3, click on **CPU Eco** and select the **Free tier**.
@@ -42,12 +42,12 @@ AND THAT'S ALL :D<br>
 **Now you can copy the URL from Koyeb and paste it into your GitHub README with a *img* tag**
 
 ## Known issues
-#### The song I'm listening to is not the same as the one shown in Github
+### The song I'm listening to is not the same as the one shown in Github
 This is normal. <br>
 On the one hand, Youtube Music sucks and sometimes doesn't update your history (you can verify this yourself by listening to something and sometimes you'll notice that it doesn't appear on your history). <br>
 On the other, GitHub needs to upload the image in their own domain before showing the image. In additions, your browser saves cache. Give it time and, after a few reloads, the image will appear (I hope so)😎.
 
-#### Nothing is shown on the Readme, and if I try to access the website, it says *Internal Server Error*
+### Nothing is shown on the Readme, and if I try to access the website, it says *Internal Server Error*
 Go to Koyeb and find the Terminal with logs. Maybe Koyeb failed because it isn't perfect, but **if it says something related to Youtube Authorization, repeat everything from step 2**.
 
 ## Special thanks to
