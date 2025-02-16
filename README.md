@@ -53,4 +53,4 @@ Go to Koyeb and find the Terminal with logs. Maybe Koyeb failed because it isn't
 ## Special thanks to
 - @tthn0 for making something similar for Spotify, which inspired me.
 - @sigma67 for making the *ytmusicapi* package.
-- @rocigonf for showing me the Spotify project and at first wanting to work with me in this project (y gracias a rosio gamba también, por supuesto 💖).
+- @rocigonf for showing me the Spotify project (y gracias a rosio gamba también, por supuesto 💖).
