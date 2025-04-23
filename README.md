@@ -47,6 +47,9 @@ This is normal. <br>
 On the one hand, Youtube Music sucks and sometimes doesn't update your history (you can verify this yourself by listening to something and sometimes you'll notice that it doesn't appear on your history). <br>
 On the other, GitHub needs to upload the image in their own domain before showing the image. In additions, your browser saves cache. Give it time and, after a few reloads, the image will appear (I hope so)😎.
 
+### Nothing is shown on the Readme
+Click the image link and then reload GitHub. Vercel issues, idk.
+
 ### Nothing is shown on the Readme, and if I try to access the website, it says *Internal Server Error*
 Go to Vecel and then "Logs". **If it says something related to Youtube Authorization, repeat everything from step 2**.
 
