@@ -3,19 +3,12 @@ import base64
 import requests
 import svgwrite
 from flask import Flask, send_file
-from ytmusicapi2 import YTMusic, OAuthCredentials
-from src import constants
+from ytmusicapi2 import YTMusic
 
 app = Flask(__name__)
 
-client_id = constants.client_id
-client_secret = constants.client_secret
-
-ytmusic = YTMusic('oauth.json', oauth_credentials=OAuthCredentials(client_id=client_id, client_secret=client_secret))
-
-# Ruta temporal para Vercel
+ytmusic = YTMusic('browser.json')
 image_folder = '/tmp'
-
 if not os.path.exists(image_folder):
     os.makedirs(image_folder)
 
@@ -31,7 +24,6 @@ def wrap_text(text, max_width, font_size):
     lines = []
     words = text.split()
     current_line = words[0]
-    
     for word in words[1:]:
         if len(current_line + ' ' + word) * font_size <= max_width:
             current_line += ' ' + word
@@ -41,9 +33,10 @@ def wrap_text(text, max_width, font_size):
     lines.append(current_line)
     return lines
 
+# FIXME: Las animaciones parecen no funcionar :(
 @app.route('/')
 def get_latest_watch():
-    history = ytmusic.get_history()  # Consigo el historial entero
+    history = ytmusic.get_history() # Consigo el historial entero
     last_watched = history[0]
     title = last_watched['title']
     thumbnail_url = last_watched['thumbnails'][0]['url']
@@ -54,26 +47,98 @@ def get_latest_watch():
     if base64_image is None:
         return "Error al obtener la imagen", 500
 
-    # Creo el archivo
     svg_filename = "image.svg"
     svg_path = os.path.join(image_folder, svg_filename)
 
-    # Crea el dibujo SVG con un fondo blanco
-    dwg = svgwrite.Drawing(svg_path, profile='tiny', size=(400, 300))
-    dwg.add(dwg.rect(insert=(0, 0), size=("100%", "100%"), fill="white"))
+    width, height = 500, 350
+    dwg = svgwrite.Drawing(svg_path, profile='full', size=(f"{width}px", f"{height}px"))
 
-    # Ajusto el texto y lo centro
-    wrapped_title = wrap_text(title, constants.max_width, constants.font_size)
-    y_position = 30
+    # Fondo degradado
+    gradient = dwg.linearGradient(start=(0, 0), end=(1, 1), id="bgGradient")
+    gradient.add_stop_color(0, '#141E30')
+    gradient.add_stop_color(1, '#243B55')
+    dwg.defs.add(gradient)
+
+    animate_grad = svgwrite.animate.AnimateTransform(
+        transform='translate',
+        from_='0,0',
+        to='1,1',
+        dur='10s',
+        repeatCount='indefinite'
+    )
+    gradient.add(animate_grad)
+
+    dwg.add(dwg.rect(insert=(0, 0), size=('100%', '100%'), fill="url(#bgGradient)"))
+
+    # Tarjeta central translúcida
+    dwg.add(dwg.rect(
+        insert=(20, 20),
+        size=(width - 40, height - 40),
+        rx=20, ry=20,
+        fill="rgb(255,255,255)",
+        fill_opacity=0.08
+    ))
+
+    # Imagen del álbum con recorte redondeado
+    img_size = 120
+    img_x = width / 2 - img_size / 2
+    img_y = 80
+    clip_id = "roundedClip"
+    clip_path = dwg.defs.add(dwg.clipPath(id=clip_id))
+    clip_path.add(dwg.rect(insert=(img_x, img_y), size=(img_size, img_size), rx=15, ry=15))
+
+    # Sombra
+    dwg.add(dwg.rect(
+        insert=(img_x - 5, img_y - 5),
+        size=(img_size + 10, img_size + 10),
+        rx=20, ry=20,
+        fill="rgb(0,0,0)",
+        fill_opacity=0.3
+    ))
+
+    image_element = dwg.image(
+        f"data:image/png;base64,{base64_image}",
+        insert=(img_x, img_y),
+        size=(img_size, img_size),
+        clip_path=f"url(#{clip_id})"
+    )
+
+    pulse_anim = svgwrite.animate.AnimateTransform(
+        transform='scale',
+        from_='1',
+        to='1.05',
+        dur='3s',
+        repeatCount='indefinite',
+        additive='sum',
+        fill='freeze'
+    )
+    image_element.add(pulse_anim)
+    dwg.add(image_element)
+
+    # Título
+    wrapped_title = wrap_text(title, 25, 7)
+    y_position = img_y + img_size + 40
     for line in wrapped_title:
-        dwg.add(dwg.text(line, insert=(200, y_position), font_size=constants.font_size, fill='black', text_anchor="middle", font_weight="bold"))
-        y_position += constants.font_size + 5 # Espacio entre líneas
-    dwg.add(dwg.text(artist, insert=(200, y_position), font_size=constants.font_size, fill='black', text_anchor="middle"))
-    y_position += constants.font_size + 5 # El texto del artista
+        dwg.add(dwg.text(
+            line,
+            insert=(width / 2, y_position),
+            text_anchor="middle",
+            fill='white',
+            font_size="22px",
+            font_weight="bold",
+            font_family="sans-serif"
+        ))
+        y_position += 26
 
-    # Centro la imagen
-    image_x = (400 - 100) / 2 # 400 es el ancho total del SVG, 100 es el ancho de la imagen
-    dwg.add(dwg.image(f"data:image/png;base64,{base64_image}", insert=(image_x, y_position), size=(100, 100)))
+    # Artista
+    dwg.add(dwg.text(
+        artist,
+        insert=(width / 2, y_position + 10),
+        text_anchor="middle",
+        fill='#CCCCCC',
+        font_size="16px",
+        font_family="sans-serif"
+    ))
 
     # Guardo el fichero y lo devuelvo
     dwg.save()

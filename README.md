@@ -20,14 +20,13 @@
  ```bash
   pip install ytmusicapi
   ```
-- Execute "ytmusicapi oauth" in the terminal.
-  - Paste ```Client ID``` and ```Client Secret``` when it tells you to do so.
-  - Open the link: Google will ask you to use the app you created in the Cloud Console with an account.
-  - Once you have done, it will create a .json file. Save it.
+- Execute "ytmusicapi browser" in the terminal.
+  - Follow [this tutorial](https://ytmusicapi.readthedocs.io/en/stable/setup/browser.html) from the official documentation. Use Firefox if possible.
+  - Once you are done, you will create a .json file. Save it.
  
 #### 3. Final step before hosting
 - Download this repo as a .zip and create a new **private GitHub repo** with the content of it (it can't be forked because it'll contain sensible data, so it must be private).
-- Edit the **.gitignore**, remove line that says ***.json*** and add ***oauth.json*** to the repo.
+- Edit the **.gitignore**, remove line that says ***.json*** and add ***browser.json*** to the repo.
 - Save the changes.
 
 #### 4. Hosting on ~~PythonAnywhere~~ Vercel✅
@@ -60,4 +59,3 @@ Vercel readonly filesystem seems to have problems with the way the API stores th
 ## Special thanks to
 - @tthn0 for making something similar for Spotify, which inspired me.
 - @sigma67 for making the *ytmusicapi* package.
-- @rocigonf for showing me the Spotify project (y gracias a rosio gamba también, por supuesto 💖).
