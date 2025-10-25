@@ -20,18 +20,27 @@ def image_to_base64(url):
     return None
 
 # Función para dividir el texto en múltiples líneas si es necesario
-def wrap_text(text, max_width, font_size):
-    lines = []
+def wrap_text(text, max_chars_per_line=18, max_lines=2):
     words = text.split()
-    current_line = words[0]
-    for word in words[1:]:
-        if len(current_line + ' ' + word) * font_size <= max_width:
-            current_line += ' ' + word
+    lines = []
+    current_line = ""
+
+    for word in words:
+        if len(current_line + " " + word) <= max_chars_per_line:
+            current_line = (current_line + " " + word).strip()
         else:
             lines.append(current_line)
             current_line = word
+        if len(lines) >= max_lines:
+            break
     lines.append(current_line)
-    return lines
+
+    # Si el texto se cortó, añadimos puntos suspensivos
+    if len(words) > sum(len(l.split()) for l in lines):
+        if len(lines) > 0:
+            lines[-1] = lines[-1].rstrip(".") + "..."
+
+    return lines[:max_lines]
 
 # FIXME: Las animaciones parecen no funcionar :(
 @app.route('/')
@@ -40,7 +49,7 @@ def get_latest_watch():
     last_watched = history[0]
     title = last_watched['title']
     thumbnail_url = last_watched['thumbnails'][0]['url']
-    artist = last_watched['artists'][0]['name']
+    artists = last_watched.get("artists")[0]['name'] if last_watched.get("artists") else "Desconocido"
 
     # Descargo la imagen y la convierto a base64
     base64_image = image_to_base64(thumbnail_url)
@@ -116,7 +125,7 @@ def get_latest_watch():
     dwg.add(image_element)
 
     # Título
-    wrapped_title = wrap_text(title, 25, 7)
+    wrapped_title = wrap_text(title, max_chars_per_line=20, max_lines=2)
     y_position = img_y + img_size + 40
     for line in wrapped_title:
         dwg.add(dwg.text(
@@ -132,7 +141,7 @@ def get_latest_watch():
 
     # Artista
     dwg.add(dwg.text(
-        artist,
+        artists,
         insert=(width / 2, y_position + 10),
         text_anchor="middle",
         fill='#CCCCCC',
