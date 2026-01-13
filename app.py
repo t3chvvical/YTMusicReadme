@@ -150,9 +150,5 @@ def get_latest_watch():
         font_family=ARTIST_FONT_FAMILY
     ))
 
-    dwg.save()
+      dwg.save()
     return send_file(svg_path, mimetype='image/svg+xml')
-from flask import send_file
-
-from flask import send_file, abort
-import os
