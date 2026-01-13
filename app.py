@@ -152,3 +152,8 @@ def get_latest_watch():
 
     dwg.save()
     return send_file(svg_path, mimetype='image/svg+xml')
+from flask import send_file
+
+@app.route("/api/now-playing")
+def now_playing():
+    return send_file("static/images/now-playing.png", mimetype="image/png")
