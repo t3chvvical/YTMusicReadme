@@ -70,7 +70,6 @@ def get_latest_watch():
     svg_path = os.path.join(IMAGE_FOLDER, SVG_FILENAME)
     dwg = svgwrite.Drawing(svg_path, profile='full', size=(f"{SVG_WIDTH}px", f"{SVG_HEIGHT}px"))
 
-    # Fondo degradado animado
     gradient = dwg.linearGradient(start=(0, 0), end=(1, 1), id=BG_GRADIENT_ID)
     gradient.add_stop_color(0, BG_GRADIENT_START_COLOR)
     gradient.add_stop_color(1, BG_GRADIENT_END_COLOR)
@@ -86,7 +85,6 @@ def get_latest_watch():
 
     dwg.add(dwg.rect(insert=(0, 0), size=("100%", "100%"), fill=f"url(#{BG_GRADIENT_ID})"))
 
-    # Tarjeta
     dwg.add(dwg.rect(
         insert=(CARD_MARGIN, CARD_MARGIN),
         size=(SVG_WIDTH - 2 * CARD_MARGIN, SVG_HEIGHT - 2 * CARD_MARGIN),
@@ -94,72 +92,4 @@ def get_latest_watch():
         fill=CARD_FILL_COLOR, fill_opacity=CARD_FILL_OPACITY
     ))
 
-    # Imagen
-    img_x = SVG_WIDTH / 2 - IMG_SIZE / 2
-    clip_id = "roundedClip"
-    clip_path = dwg.defs.add(dwg.clipPath(id=clip_id))
-    clip_path.add(dwg.rect(insert=(img_x, IMG_Y_POSITION), size=(IMG_SIZE, IMG_SIZE), rx=IMG_CORNER_RADIUS, ry=IMG_CORNER_RADIUS))
-
-    dwg.add(dwg.rect(
-        insert=(img_x - IMG_SHADOW_OFFSET, IMG_Y_POSITION - IMG_SHADOW_OFFSET),
-        size=(IMG_SIZE + 2 * IMG_SHADOW_OFFSET, IMG_SIZE + 2 * IMG_SHADOW_OFFSET),
-        rx=IMG_CORNER_RADIUS, ry=IMG_CORNER_RADIUS,
-        fill="black", fill_opacity=IMG_SHADOW_OPACITY
-    ))
-
-    image_element = dwg.image(
-        f"data:image/png;base64,{base64_image}",
-        insert=(img_x, IMG_Y_POSITION),
-        size=(IMG_SIZE, IMG_SIZE),
-        clip_path=f"url(#{clip_id})"
-    )
-
-    image_element.add(svgwrite.animate.AnimateTransform(
-        transform='scale',
-        from_=IMAGE_PULSE_FROM,
-        to=IMAGE_PULSE_TO,
-        dur=IMAGE_PULSE_DURATION,
-        repeatCount='indefinite',
-        additive='sum',
-        fill='freeze'
-    ))
-
-    dwg.add(image_element)
-
-    # Título
-    y = IMG_Y_POSITION + IMG_SIZE + IMG_THRESHOLD
-    for line in wrap_text(title):
-        dwg.add(dwg.text(
-            line,
-            insert=(SVG_WIDTH / 2, y),
-            text_anchor="middle",
-            fill=TITLE_FONT_COLOR,
-            font_size=TITLE_FONT_SIZE,
-            font_weight=TITLE_FONT_WEIGHT,
-            font_family=TITLE_FONT_FAMILY
-        ))
-        y += TITLE_LINE_SPACING
-
-    # Artista
-    dwg.add(dwg.text(
-        artists,
-        insert=(SVG_WIDTH / 2, y + ARTIST_Y_OFFSET),
-        text_anchor="middle",
-        fill=ARTIST_FONT_COLOR,
-        font_size=ARTIST_FONT_SIZE,
-        font_family=ARTIST_FONT_FAMILY
-    ))
-
-    dwg.save()
-    return send_file(svg_path, mimetype='image/svg+xml')
-from flask import send_file
-
-from flask import send_file, abort
-import os
-
-@app.route("/api/now-playing")
-def now_playing():
-    image_path = os.path.join("static", "images", "now-playing.png")
-    if os.path.exists(image_path):
-        return send_file(image_path, mimetype="image/png")
-    return abort(404)
+    img_x = SVG_WIDTH
