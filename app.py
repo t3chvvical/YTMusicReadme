@@ -159,7 +159,8 @@ import os
 
 @app.route("/api/now-playing")
 def now_playing():
-    image_path = os.path.join("static", "images", "now-playing.png")
-    if os.path.exists(image_path):
-        return send_file(image_path, mimetype="image/png")
+    svg_path = os.path.join(IMAGE_FOLDER, SVG_FILENAME)
+    if os.path.exists(svg_path):
+        return send_file(svg_path, mimetype="image/svg+xml")
     return abort(404)
+
